@@ -6,9 +6,9 @@ async function bootstrap() {
 
   app.enableCors({
     origin: [
+      'https://samibumbar.github.io',
       'http://localhost:5173',
       'http://localhost:5174',
-      'https://samibumbar.github.io',
     ],
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
