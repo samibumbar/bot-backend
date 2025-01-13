@@ -1,22 +1,21 @@
+import mongoose from 'mongoose';
 import { ChatService } from './chat/chat.service';
+import { QuestionSchema } from './chat/models/question.schema';
+import { MessageSchema } from './chat/models/message.schema';
 
-async function testChatService() {
-  const chatService = new ChatService();
+async function main() {
+  await mongoose.connect('mongodb+srv://sami:sami@sami.gnams.mongodb.net/sami');
 
-  try {
-    const message = 'Cum construiesc un server?';
-    const response = await chatService.getChatResponse(message);
-    console.log('Răspuns primit din fișierul JSON:', response);
-  } catch (error) {
-    if (error instanceof Error) {
-      console.error(
-        'Eroare la testarea serviciului ChatService:',
-        error.message,
-      );
-    } else {
-      console.error('Eroare necunoscută:', error);
-    }
-  }
+  const QuestionModel = mongoose.model('Question', QuestionSchema);
+  const MessageModel = mongoose.model('Message', MessageSchema);
+
+  const chatService = new ChatService(QuestionModel, MessageModel);
+
+  const question = 'Ce este MongoDB?';
+  const response = await chatService.getResponse(question);
+  console.log('Response:', response);
+
+  mongoose.connection.close();
 }
 
-testChatService();
+main().catch((err) => console.error(err));

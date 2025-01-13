@@ -1,14 +1,15 @@
-import { Module, MiddlewareConsumer, RequestMethod } from '@nestjs/common';
+import { Module } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
 import { ChatModule } from './chat/chat.module';
-import { RateLimiterMiddleware } from './middleware/rate-limiter.middleware';
+import { GoogleSearchController } from './chat/search.controler';
 
 @Module({
-  imports: [ChatModule],
+  imports: [
+    MongooseModule.forRoot(
+      'mongodb+srv://sami:sami@sami.gnams.mongodb.net/sami?retryWrites=true&w=majority&appName=sami',
+    ),
+    ChatModule,
+  ],
+  controllers: [GoogleSearchController],
 })
-export class AppModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(RateLimiterMiddleware)
-      .forRoutes({ path: 'chat', method: RequestMethod.POST });
-  }
-}
+export class AppModule {}

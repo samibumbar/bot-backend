@@ -1,17 +1,27 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, Get } from '@nestjs/common';
 import { ChatService } from './chat.service';
 
 @Controller('chat')
 export class ChatController {
   constructor(private readonly chatService: ChatService) {}
 
-  @Post()
-  async sendMessage(@Body('message') message: string) {
-    if (!message) {
-      return { error: 'Message is required' };
+  @Post('message')
+  async sendMessage(@Body() body: { question: string }) {
+    const userMessage = body.question;
+    await this.chatService.saveMessage('user', userMessage);
+
+    let botResponse = await this.chatService.getResponse(userMessage);
+
+    if (botResponse.includes('Nu am găsit un răspuns')) {
+      botResponse += ' Caut răspunsuri pe internet...';
     }
 
-    const reply = await this.chatService.getChatResponse(message);
-    return { reply };
+    await this.chatService.saveMessage('bot', botResponse);
+    return { message: botResponse };
+  }
+
+  @Get('messages')
+  async getMessages() {
+    return this.chatService.getMessages();
   }
 }
