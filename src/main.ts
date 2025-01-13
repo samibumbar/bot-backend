@@ -1,16 +1,21 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-// import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.enableCors({
-    origin: 'http://localhost:5174',
+    origin: [
+      'http://localhost:5173',
+      'http://localhost:5174',
+      'https://samibumbar.github.io',
+    ],
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
   });
 
-  await app.listen(3003);
+  const PORT = process.env.PORT || 3003;
+  await app.listen(PORT);
+  console.log(`Server running on port ${PORT}`);
 }
 bootstrap();
